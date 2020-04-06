@@ -69,8 +69,15 @@ export default function Checkout() {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
+  const handleNext = async () => {
+    if(activeStep===2)
+    {
+      const tezbridge=window.tezbridge;
+      const address = await tezbridge.request({method: 'get_source'});
+      console.log(address);
+      return;
+    }
+      setActiveStep(activeStep + 1);
   };
 
   const handleBack = () => {
