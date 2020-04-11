@@ -13,6 +13,8 @@ import AddressForm from './AddressForm';
 import ContactDetails from './ContactDetails';
 import Submit from './submit';
 
+const swarm = require("swarm-js").at("http://swarm-gateways.net");
+
 const styles = theme => ({
   appBar: {
     position: 'relative',
@@ -54,21 +56,73 @@ const styles = theme => ({
 class Register extends React.Component {
   state = {
     activeStep: 0,
-    steps: ['Personal Details', 'Contact Details', 'Submit']
+    steps: ['Personal Details', 'Contact Details', 'Submit'],
+    firstname: "",
+    lastname: "",
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
+    country: "",
+    phone: "",
+    aadhar: "",
+    email: ""
   }
 
   getStepContent(step) {
     switch (step) {
       case 0:
-        return <AddressForm />;
+        return <AddressForm parentCallback1={this.callbackFunction1}
+          parentCallback2={this.callbackFunction2}
+          parentCallback3={this.callbackFunction3}
+          parentCallback4={this.callbackFunction4}
+          parentCallback5={this.callbackFunction5}
+          parentCallback6={this.callbackFunction6}
+          parentCallback7={this.callbackFunction7}
+        />;
       case 1:
-        return <ContactDetails />;
+        return <ContactDetails
+          parentCallback8={this.callbackFunction8}
+          parentCallback9={this.callbackFunction9}
+          parentCallback10={this.callbackFunction10}
+        />;
       case 2:
         return <Submit />;
       default:
         throw new Error('Unknown step');
     }
   }
+  callbackFunction1 = (childData) => {
+    this.setState({ firstname: childData })
+  }
+  callbackFunction2 = (childData) => {
+    this.setState({ lastname: childData })
+  }
+  callbackFunction3 = (childData) => {
+    this.setState({ address: childData })
+  }
+  callbackFunction4 = (childData) => {
+    this.setState({ city: childData })
+  }
+  callbackFunction5 = (childData) => {
+    this.setState({ state: childData })
+  }
+  callbackFunction6 = (childData) => {
+    this.setState({ zip: childData })
+  }
+  callbackFunction7 = (childData) => {
+    this.setState({ country: childData })
+  }
+  callbackFunction8 = (childData) => {
+    this.setState({ phone: childData })
+  }
+  callbackFunction9 = (childData) => {
+    this.setState({ aadhar: childData })
+  }
+  callbackFunction10 = (childData) => {
+    this.setState({ email: childData })
+  }
+
   handleNext = async () => {
     if (this.state.activeStep === 2) {
       const tezbridge = window.tezbridge;
@@ -76,19 +130,26 @@ class Register extends React.Component {
       console.log(address);
       return;
     }
+    if (this.state.activeStep === 1) {
+      const json = {
+        "firstname": this.state.firstname, "lastname": this.state.lastname, "address": this.state.state, "city": this.state.city,
+        "state": this.state.state, "zip": this.state.zip, "country": this.state.country, "phone": this.state.phone, "aadhar": this.state.aadhar, "email": this.state.email
+      };
+      const file = JSON.stringify(json);
+      await swarm.upload(file).then(hash => {
+        console.log("Uploaded file. Address:", hash);
+      })
+    }
     this.setState({
       activeStep: this.state.activeStep + 1
     })
     console.log(this.state.activeStep);
-    //setActiveStep(activeStep + 1);
   };
 
   handleBack = () => {
     this.setState({
       activeStep: this.state.activeStep - 1
     })
-
-    //setActiveStep(activeStep - 1);
   };
   render() {
 
