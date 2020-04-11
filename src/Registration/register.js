@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Paper from '@material-ui/core/Paper';
@@ -13,7 +13,7 @@ import AddressForm from './AddressForm';
 import ContactDetails from './ContactDetails';
 import Submit from './submit';
 
-const useStyles = makeStyles((theme) => ({
+const styles = theme => ({
   appBar: {
     position: 'relative',
   },
@@ -48,92 +48,104 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
-}));
+});
 
-const steps = ['Personal Details', 'Contact Details', 'Submit'];
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <AddressForm />;
-    case 1:
-      return <ContactDetails />;
-    case 2:
-      return <Submit />;
-    default:
-      throw new Error('Unknown step');
+class Register extends React.Component {
+  state = {
+    activeStep: 0,
+    steps: ['Personal Details', 'Contact Details', 'Submit']
   }
-}
 
-export default function Checkout() {
-  const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-
-  const handleNext = async () => {
-    if(activeStep===2)
-    {
-      const tezbridge=window.tezbridge;
-      const address = await tezbridge.request({method: 'get_source'});
+  getStepContent(step) {
+    switch (step) {
+      case 0:
+        return <AddressForm />;
+      case 1:
+        return <ContactDetails />;
+      case 2:
+        return <Submit />;
+      default:
+        throw new Error('Unknown step');
+    }
+  }
+  handleNext = async () => {
+    if (this.state.activeStep === 2) {
+      const tezbridge = window.tezbridge;
+      const address = await tezbridge.request({ method: 'get_source' });
       console.log(address);
       return;
     }
-      setActiveStep(activeStep + 1);
+    this.setState({
+      activeStep: this.state.activeStep + 1
+    })
+    console.log(this.state.activeStep);
+    //setActiveStep(activeStep + 1);
   };
 
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
-  };
+  handleBack = () => {
+    this.setState({
+      activeStep: this.state.activeStep - 1
+    })
 
-  return (
-    <React.Fragment>
-      <CssBaseline />
-      <AppBar position="absolute" color="default" className={classes.appBar}>
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            SHAttEr Technologies
+    //setActiveStep(activeStep - 1);
+  };
+  render() {
+
+    const { classes } = this.props;
+    return (
+      <React.Fragment>
+        <CssBaseline />
+        <AppBar position="absolute" color="default" className={classes.appBar}>
+          <Toolbar>
+            <Typography variant="h6" color="inherit" noWrap>
+              SHAttEr Technologies
           </Typography>
-        </Toolbar>
-      </AppBar>
-      <main className={classes.layout}>
-        <Paper className={classes.paper}>
-          <Typography component="h1" variant="h4" align="center">
-            Registration Form
+          </Toolbar>
+        </AppBar>
+        <main className={classes.layout}>
+          <Paper className={classes.paper}>
+            <Typography component="h1" variant="h4" align="center">
+              Registration Form
           </Typography>
-          <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <React.Fragment>
-            {activeStep === steps.length ? (
-              <React.Fragment>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                {getStepContent(activeStep)}
-                <div className={classes.buttons}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} className={classes.button}>
-                      Back
-                    </Button>
-                  )}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleNext}
-                    className={classes.button}
-                  >
-                    {activeStep === steps.length - 1 ? 'Register' : 'Next'}
-                  </Button>
-                </div>
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        </Paper>
-        
-      </main>
-    </React.Fragment>
-  );
+            <Stepper activeStep={this.state.activeStep} className={classes.stepper}>
+              {this.state.steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            <React.Fragment>
+              {this.state.activeStep === this.state.steps.length ? (
+                <React.Fragment>
+                </React.Fragment>
+              ) : (
+                  <React.Fragment>
+                    {this.getStepContent(this.state.activeStep)}
+                    <div className={classes.buttons}>
+                      {this.state.activeStep !== 0 && (
+                        <Button onClick={this.handleBack} className={classes.button}>
+                          Back
+                        </Button>
+                      )}
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this.handleNext}
+                        className={classes.button}
+                      >
+                        {this.state.activeStep === this.state.steps.length - 1 ? 'Register' : 'Next'}
+                      </Button>
+                    </div>
+                  </React.Fragment>
+                )}
+            </React.Fragment>
+          </Paper>
+
+        </main>
+      </React.Fragment>
+    );
+  }
 }
+
+export default withStyles(styles)(Register);
