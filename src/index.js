@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Register from './Registration/register';
+//import Register from './Registration/register';
 import * as serviceWorker from './serviceWorker';
+import Booking from './Booking/booking_home';
 
 ReactDOM.render(
   <React.StrictMode>
-   <Register/>
+   <Booking/>
   </React.StrictMode>,
   document.getElementById('root')
 );
