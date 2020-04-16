@@ -10,7 +10,7 @@ function sleep(delay = 0) {
 }
 
 
-export default function Asynchronous() 
+export default function Asynchronous(props) 
 {
     const [open, setOpen] = React.useState(false);
     const [options, setOptions] = React.useState([]);
@@ -65,7 +65,9 @@ export default function Asynchronous()
             onClose={() => {
                 setOpen(false);
             }}
-            getOptionSelected={(option, value) => option.country_code === value.code}
+            onChange={(event, value) => {
+                {props.to(value.code)};
+            }}
             getOptionLabel={option => option.code}
             options={options}
             loading={loading}

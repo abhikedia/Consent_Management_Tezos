@@ -9,7 +9,7 @@ function sleep(delay = 0) {
     });
 }
 
-export default function Asynchronous() {
+export default function Asynchronous(props) {
 
 
     const [open, setOpen] = React.useState(false);
@@ -65,9 +65,11 @@ export default function Asynchronous() {
             onClose={() => {
                 setOpen(false);
             }}
-            getOptionSelected={(option, value) => option.country_code === value.code}
             getOptionLabel={option => option.code}
             options={options}
+            onChange={(event, value) => {
+                {props.from(value.code)};
+            }}
             loading={loading}
             renderInput={(params) => (
                 <TextField
@@ -86,6 +88,9 @@ export default function Asynchronous() {
                 />
             )}
         />
+
     );
+
 }
+
 

@@ -10,6 +10,11 @@ import Paper from '@material-ui/core/Paper';
 import { Button } from '@material-ui/core';
 import From from './from';
 import To from './to';
+import history from '../history';
+import Modal from '@material-ui/core/Modal';
+import Fade from '@material-ui/core/Fade';
+import Backdrop from '@material-ui/core/Backdrop';
+import { Router, Route } from 'react-router-dom';
 
 const styles = theme => ({
     appBar: {
@@ -43,6 +48,20 @@ const styles = theme => ({
             fontSize: 18,
         },
     },
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '50%',
+        marginLeft: 'auto',
+        marginRight: 'auto'
+    },
+    paper1: {
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
+    }
 });
 
 function sleep(delay = 0) {
@@ -52,16 +71,34 @@ function sleep(delay = 0) {
 }
 
 class Booking extends React.Component {
+    state = {
+        from: "",
+        to: "",
+        open: false,
+    }
+    callbackfunction1 = async (childData) => {
+        await this.setState({ from: childData.toString() })
+        console.log(this.state.from)
+    }
+    callbackfunction2 = async (childData) => {
+        await this.setState({ to: childData.toString() })
+        console.log(this.state.to)
+    }
+    handleOpen = () => {
+        this.setState({ open: true })
+    }
+    handleClose = () => {
+        this.setState({ open: false })
+    }
     render() {
         const { classes } = this.props;
-
         return (
-            <React.Fragment >
+            <React.Fragment>
                 <CssBaseline />
                 <AppBar position="absolute" color="default" className={classes.appBar}>
                     <Toolbar>
                         <Typography variant="h6" color="inherit" noWrap>
-                            SHAttEr Technologies
+                            <strong>SHAttEr Technologies</strong>
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -73,10 +110,10 @@ class Booking extends React.Component {
                         <React.Fragment>
                             <Grid container spacing={3}>
                                 <Grid item xs={12} sm={12}>
-                                    <From />
+                                    <From from={this.callbackfunction1} />
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
-                                    <To />
+                                    <To to={this.callbackfunction1} />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <TextField
@@ -105,11 +142,37 @@ class Booking extends React.Component {
                                         onChange={this.myChangeHandler4}
                                         autoComplete="billing address-level2"
                                     />
-                                    <div><strong>The transaction should be made with the traveller's account.</strong></div>
                                 </Grid>
+                                <Grid item xs={12}>
+                                    <div>
+                                        <Button variant="contained" color="secondary" onClick={this.handleOpen}>
+                                            See Flights
+                                            </Button>
+                                        <Modal
+                                            aria-labelledby="transition-modal-title"
+                                            aria-describedby="transition-modal-description"
+                                            className={classes.modal}
+                                            open={this.state.open}
+                                            onClose={this.handleClose}
+                                            closeAfterTransition
+                                            BackdropComponent={Backdrop}
+                                            BackdropProps={{
+                                                timeout: 500,
+                                            }}
+                                        >
+                                            <Fade in={this.state.open}>
+                                                <div className={classes.paper1}>
+                                                    <h2 id="transition-modal-title">Transition modal</h2>
+                                                    <p id="transition-modal-description">react-transition-group animates me.</p>
+                                                </div>
+                                            </Fade>
+                                        </Modal>
+                                    </div>
+                                </Grid>
+                                <div><strong>The transaction should be made with the traveller's account.</strong></div>
                                 <Button variant="contained" color="secondary" fullWidth >
                                     Transact
-                                    </Button>
+                                </Button>
                             </Grid>
                         </React.Fragment>
                     </Paper>
