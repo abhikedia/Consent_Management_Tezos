@@ -9,14 +9,17 @@ const styles = theme => ({
     appBar: {
         position: 'relative',
     },
+    root: {
+        width: '100%',
+        maxWidth: 500,
+        
+      },
 });
 
-class Login extends React.Component
-{
-    render()
-    {
+class Login extends React.Component {
+    render() {
         const { classes } = this.props;
-        return(
+        return (
             <React.Fragment>
                 <CssBaseline />
                 <AppBar position="absolute" color="default" className={classes.appBar}>
@@ -26,8 +29,11 @@ class Login extends React.Component
                         </Typography>
                     </Toolbar>
                 </AppBar>
+                <Typography variant="h1" className={classes.root} component="h2" gutterBottom>
+                    <strong>My Bookings</strong>
+                </Typography>
             </React.Fragment>
         );
     }
 }
-export default withStyles(styles)(Login);
+export default withStyles(styles)(Login);   
