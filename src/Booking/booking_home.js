@@ -10,15 +10,24 @@ import Paper from '@material-ui/core/Paper';
 import { Button } from '@material-ui/core';
 import From from './from';
 import To from './to';
-import history from '../history';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
 import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop';
-import { Router, Route } from 'react-router-dom';
+import img from '../assets/flight.jpg';
 
 const styles = theme => ({
     appBar: {
         position: 'relative',
+    },
+    root: {
+        maxWidth: 345,
+    },
+    media: {
+        height: 140,
     },
     layout: {
         width: '100%',
@@ -71,24 +80,80 @@ function sleep(delay = 0) {
 }
 
 class Booking extends React.Component {
-    state = {
-        from: "",
-        to: "",
-        open: false,
+    constructor(props) {
+        super(props);
+        this.state = {
+            from: "",
+            open: false,
+            date: "2020-04-16",
+            time: "10:30",
+            name: "",
+            count: -1,
+            to_: "",
+        };
+        //this.callbackfunction2 = this.callbackfunction2.bind(this);
     }
+
     callbackfunction1 = async (childData) => {
         await this.setState({ from: childData.toString() })
         console.log(this.state.from)
     }
-    callbackfunction2 = async (childData) => {
-        await this.setState({ to: childData.toString() })
-        console.log(this.state.to)
+    callbackfunction2 = async (childData1) => {
+        await this.setState({ to_: childData1.toString() })
+        console.log(this.state.to_)
     }
     handleOpen = () => {
         this.setState({ open: true })
     }
     handleClose = () => {
         this.setState({ open: false })
+    }
+    myChangeHandler1 = async (event) => {
+        await this.setState({ date: event.target.value });
+    }
+    myChangeHandler2 = async (event) => {
+        await this.setState({ time: event.target.value });
+    }
+    myChangeHandler3 = async (event) => {
+        await this.setState({ name: event.target.value });
+    }
+    transact = async (event) => {
+        var url = "http://localhost:4000/addBooking";
+
+        await fetch(url, {
+            method: "POST", // or 'PUT'
+            mode: "cors",
+            body: JSON.stringify({
+                //user_id: sessionStorage.getItem("LoggedUser"),
+                id: this.state.count + 1,
+                user_address: "temporary",
+                airline_address: "indigo",
+                to_: this.state.to_,
+                from_: this.state.from,
+                time: this.state.time,
+                date: this.state.date,
+                name: this.state.name,
+            }), // data can be `string` or {object}!    
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(res => res.body)
+            .then(response => console.log("Success:", JSON.stringify(response)))
+            .catch(error => console.error("Error:", error));
+    }
+
+    componentDidMount = async () => {
+        var url = "http://localhost:4000/getCount";
+        await fetch(url)
+            .then(response => response.json())
+            .then(response => {
+                if (response.data.length == 0)
+                    this.setState({ count: 0 });
+                else
+                    this.setState({ count: response.data[0].id });
+            })
+            .catch(err => console.log(err));
     }
     render() {
         const { classes } = this.props;
@@ -113,7 +178,7 @@ class Booking extends React.Component {
                                     <From from={this.callbackfunction1} />
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
-                                    <To to={this.callbackfunction1} />
+                                    <To to={this.callbackfunction2} />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <TextField
@@ -121,8 +186,8 @@ class Booking extends React.Component {
                                         label="Select Date"
                                         fullWidth
                                         type="date"
-                                        defaultValue="2017-05-24"
-                                        onChange={this.myChangeHandler3}
+                                        defaultValue="2020-04-16"
+                                        onChange={this.myChangeHandler1}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -131,7 +196,7 @@ class Booking extends React.Component {
                                         fullWidth
                                         type="time"
                                         defaultValue="10:30"
-                                        onChange={this.myChangeHandler5}
+                                        onChange={this.myChangeHandler2}
                                     />
                                 </Grid>
                                 <Grid item xs={12} >
@@ -139,7 +204,7 @@ class Booking extends React.Component {
                                         required
                                         label="Passenger's Name"
                                         fullWidth
-                                        onChange={this.myChangeHandler4}
+                                        onChange={this.myChangeHandler3}
                                         autoComplete="billing address-level2"
                                     />
                                 </Grid>
@@ -162,15 +227,38 @@ class Booking extends React.Component {
                                         >
                                             <Fade in={this.state.open}>
                                                 <div className={classes.paper1}>
-                                                    <h2 id="transition-modal-title">Transition modal</h2>
-                                                    <p id="transition-modal-description">react-transition-group animates me.</p>
+                                                    <h2 id="transition-modal-title">Verify Booking</h2>
+                                                    <p id="transition-modal-description"><strong>Note:</strong>The data shown here is only for demo purpose.</p>
+                                                    <Card className={classes.root}>
+                                                        <CardActionArea>
+                                                            <CardMedia
+                                                                className={classes.media}
+                                                                image={img}
+                                                                title="itinerary"
+                                                            />
+                                                            <CardContent>
+                                                                <Typography gutterBottom variant="h5" component="h2">
+                                                                    Your itinerary
+                                                                </Typography>
+                                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                                    <strong>Airline:</strong> Indigo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <strong>Aircraft:</strong> Airbus A320<br />
+                                                                    <strong>Departure Date: </strong> {this.state.date} <br />
+                                                                    <strong>Departure Time: </strong> {this.state.time} <br />
+                                                                    <strong>From:</strong> {this.state.from} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <strong>To:</strong> {this.state.to_} <br />
+                                                                    <strong>Passenger's Name:</strong> {this.state.name}
+                                                                </Typography>
+                                                            </CardContent>
+                                                        </CardActionArea>
+                                                    </Card>
                                                 </div>
                                             </Fade>
                                         </Modal>
                                     </div>
                                 </Grid>
                                 <div><strong>The transaction should be made with the traveller's account.</strong></div>
-                                <Button variant="contained" color="secondary" fullWidth >
+                                <Button variant="contained" color="secondary" fullWidth onClick={this.transact}>
                                     Transact
                                 </Button>
                             </Grid>
