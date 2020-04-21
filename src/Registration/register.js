@@ -12,8 +12,14 @@ import Typography from '@material-ui/core/Typography';
 import AddressForm from './AddressForm';
 import ContactDetails from './ContactDetails';
 import Submit from './submit';
+import history from '../history';
+import { Tezos } from '@taquito/taquito';
+import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 
+const contractAddress = "KT1XnADPsMgAvRCjJPW396hcYPNZWMDqFgR4";
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
+const tezbridge = window.tezbridge;
+
 
 const styles = theme => ({
   appBar: {
@@ -66,7 +72,10 @@ class Register extends React.Component {
     country: "",
     phone: "",
     aadhar: "",
-    email: ""
+    email: "",
+    wallet: "",
+    hash: "",
+    contract_instance: ""
   }
 
   getStepContent(step) {
@@ -87,7 +96,7 @@ class Register extends React.Component {
           parentCallback10={this.callbackFunction10}
         />;
       case 2:
-        return <Submit />;
+        return <Submit parentCallback11={this.callbackFunction11} />;
       default:
         throw new Error('Unknown step');
     }
@@ -122,36 +131,60 @@ class Register extends React.Component {
   callbackFunction10 = (childData) => {
     this.setState({ email: childData })
   }
+  callbackFunction11 = (childData) => {
+    this.setState({ wallet: childData })
+  }
 
   handleNext = async () => {
-    if (this.state.activeStep === 2) {
-      const tezbridge = window.tezbridge;
-      const address = await tezbridge.request({ method: 'get_source' });
-      console.log(address);
-      return;
-    }
     if (this.state.activeStep === 1) {
-      const json = {
-        "firstname": this.state.firstname, "lastname": this.state.lastname, "address": this.state.state, "city": this.state.city,
-        "state": this.state.state, "zip": this.state.zip, "country": this.state.country, "phone": this.state.phone, "aadhar": this.state.aadhar, "email": this.state.email
-      };
-      const file = JSON.stringify(json);
-      await swarm.upload(file).then(hash => {
-        console.log("Uploaded file. Address:", hash);
+      const body = JSON.stringify({
+        "firstname": this.state.firstname,
+        "lastname": this.state.lastname,
+        "address": this.state.state,
+        "city": this.state.city,
+        "state": this.state.state,
+        "zip": this.state.zip,
+        "country": this.state.country,
+        "phone": this.state.phone,
+        "aadhar": this.state.aadhar,
+        "email": this.state.email
+      });
+      await swarm.upload(body).then(hash1 => {
+        this.setState({
+          hash: hash1
+        });
       })
+      console.log("Swarm id:", this.state.hash);
+      console.log(this.state.contract_instance.methods);
+    }
+    if (this.state.activeStep === 2) {
+      // console.log(this.state.wallet);
+      // const op = await this.state.contract_instance.methods.addQid(this.state.hash).send();
+      // if (op.status == "applied") {
+      //   console.log(op.hash);
+
+      history.push('/login', { address: this.state.wallet });
+      window.location.reload();
+
     }
     this.setState({
       activeStep: this.state.activeStep + 1
     })
-    console.log(this.state.activeStep);
   };
 
-  handleBack = () => {
-    this.setState({
-      activeStep: this.state.activeStep - 1
+  componentDidMount = async () => {
+    Tezos.setProvider({
+      rpc: "https://carthagenet.SmartPy.io",
+      signer: new TezBridgeSigner()
+    });
+
+    const contract = await Tezos.contract.at(contractAddress);
+    await this.setState({
+      contract_instance: contract
     })
-  };
+  }
   render() {
+
 
     const { classes } = this.props;
     return (
