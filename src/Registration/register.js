@@ -158,19 +158,21 @@ class Register extends React.Component {
       console.log(this.state.contract_instance.methods);
     }
     if (this.state.activeStep === 2) {
-      // console.log(this.state.wallet);
-      // const op = await this.state.contract_instance.methods.addQid(this.state.hash).send();
-      // if (op.status == "applied") {
-      //   console.log(op.hash);
+      console.log(this.state.wallet);
+      const op = await this.state.contract_instance.methods.addQid(this.state.hash).send();
+      if (op.status == "applied") {
+        console.log(op.hash);
 
-      history.push('/login', { address: this.state.wallet });
-      window.location.reload();
+        history.push('/login', { address: this.state.wallet });
+        window.location.reload();
 
+      }
     }
     this.setState({
       activeStep: this.state.activeStep + 1
     })
-  };
+
+  }
 
   componentDidMount = async () => {
     Tezos.setProvider({
@@ -183,9 +185,8 @@ class Register extends React.Component {
       contract_instance: contract
     })
   }
+
   render() {
-
-
     const { classes } = this.props;
     return (
       <React.Fragment>

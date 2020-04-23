@@ -57,6 +57,7 @@ class Login extends React.Component {
         await this.setState({
             contract_instance: contract
         })
+        alert("Your account has been registered.");
     }
     constructor(props) {
         super(props);
@@ -101,7 +102,7 @@ class Login extends React.Component {
                                 onClick={this.checkLogin}
                                 className={classes.submit}
                             >
-                                Sign In with portis
+                                Sign In 
                             </Button>
                             <Grid container>
                                 <Grid item>

@@ -65,10 +65,10 @@ export default function LoggedIn(props) {
     const [options, setOptions] = React.useState([]);
 
     React.useEffect(() => {
-        var url = "http://localhost:4000/getPassengers/" + "tz1R4p21KgEqHGcEvJcDe7hRZfjVZCX47EwJ";
+        var url = "http://localhost:4000/getBookings/" + props.location.state.address;
 
-        function createData(id, name, user_address, to_, from_, date) {
-            return { id, name, user_address, to_, from_, date };
+        function createData(id, name, airline_address, to_, from_, date) {
+            return { id, name, airline_address, to_, from_, date };
         }
 
         fetch(url, {
@@ -81,7 +81,7 @@ export default function LoggedIn(props) {
         }).then(data => {
             const row = [];
             for (var i in data)
-                row.push(createData(data[i].id, data[i].name, data[i].user_address, data[i].to_, data[i].from_, data[i].date));
+                row.push(createData(data[i].id, data[i].name, data[i].airline_address, data[i].to_, data[i].from_, data[i].date));
             setOptions(row)
         }).catch(err => {
             console.log('caught it!', err);
@@ -107,29 +107,29 @@ export default function LoggedIn(props) {
                 </Toolbar>
             </AppBar>
             <Typography variant="h2" className={classes.root} component="h2" gutterBottom >
-                <strong>Bookings</strong>
+                <strong>My Bookings</strong>
             </Typography>
             <TableContainer component={Paper}>
                 <Table className={classes1.table} aria-label="customized table">
                     <TableHead>
                         <TableRow>
-                            <StyledTableCell align="center">Passenger's Address</StyledTableCell>
+                            <StyledTableCell >Airline</StyledTableCell>
                             <StyledTableCell align="center">Passenger's Name</StyledTableCell>
                             <StyledTableCell align="center">From</StyledTableCell>
                             <StyledTableCell align="center">To</StyledTableCell>
                             <StyledTableCell align="center">Date</StyledTableCell>
-                            <StyledTableCell align="center">Action</StyledTableCell>
+                            <StyledTableCell align="center">Alter Booking</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {options.map((options) => (
                             <StyledTableRow key={options.id}>
-                                <StyledTableCell align="center" component="th" scope="row">{options.user_address}</StyledTableCell>
+                                <StyledTableCell align="center" component="th" scope="row">{options.airline_address}</StyledTableCell>
                                 <StyledTableCell align="center">{options.name}</StyledTableCell>
                                 <StyledTableCell align="center">{options.from_}</StyledTableCell>
                                 <StyledTableCell align="center">{options.to_}</StyledTableCell>
                                 <StyledTableCell align="center">{options['date']}</StyledTableCell>
-                                <StyledTableCell align="center"><Button variant="contained" color="secondary" onClick={modifybooking(options.id)}>Contact</Button></StyledTableCell>
+                                <StyledTableCell align="center"><Button variant="contained" color="secondary" onClick={modifybooking(options.id)}>Modify</Button></StyledTableCell>
                             </StyledTableRow>
                             //</TableRow>
                         ))}

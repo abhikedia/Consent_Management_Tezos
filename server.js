@@ -27,10 +27,10 @@ app.listen(PORT, () => {
 });
 
 
-app.post("/addBooking",function (req, res) {
+app.post("/addBooking", function (req, res) {
     var postData = req.body;
     console.log("execute");
-    console.log(postData,res);
+    console.log(postData, res);
     connection.query("INSERT INTO Bookings SET ?", postData, function (
         error,
         results,
@@ -41,12 +41,32 @@ app.post("/addBooking",function (req, res) {
     });
 });
 
-app.get("/getCount/",function(req, res) {
+app.get("/getCount/", function (req, res) {
     connection.query(
-      "select id from Bookings order by id DESC LIMIT 1",
-      [req.params.vr_id],
-      function(err, results) {
-        err ? res.send(err) : res.json({ data: results });
-      }
+        "select id from Bookings order by id DESC LIMIT 1",
+        [req.params.vr_id],
+        function (err, results) {
+            err ? res.send(err) : res.json({ data: results });
+        }
     );
-  });
+});
+
+app.get("/getBookings/:add", function (req, res) {
+    connection.query(
+        "select * from Bookings where user_address=?",
+        [req.params.add],
+        function (err, results) {
+            err ? res.send(err) : res.end(JSON.stringify(results));
+        }
+    );
+});
+
+app.get("/getPassengers/:add", function (req, res) {
+    connection.query(
+        "select * from Bookings where airline_address=?",
+        [req.params.add],
+        function (err, results) {
+            err ? res.send(err) : res.end(JSON.stringify(results));
+        }
+    );
+});

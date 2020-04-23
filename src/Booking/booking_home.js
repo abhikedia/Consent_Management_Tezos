@@ -18,13 +18,18 @@ import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop';
 import img from '../assets/flight.jpg';
+import history from '../history';
+import { Tezos } from '@taquito/taquito';
+import { TezBridgeSigner } from '@taquito/tezbridge-signer';
+
+const contractAddress = "KT1XnADPsMgAvRCjJPW396hcYPNZWMDqFgR4";
 
 const styles = theme => ({
     appBar: {
         position: 'relative',
     },
     root: {
-        maxWidth: 345,
+        maxWidth: 380,
     },
     media: {
         height: 140,
@@ -90,10 +95,11 @@ class Booking extends React.Component {
             name: "",
             count: -1,
             to_: "",
+            wallet: props.location.state.address,
+            contract_instance: "",
+            airline_add: "tz1R4p21KgEqHGcEvJcDe7hRZfjVZCX47EwJ"
         };
-        //this.callbackfunction2 = this.callbackfunction2.bind(this);
     }
-
     callbackfunction1 = async (childData) => {
         await this.setState({ from: childData.toString() })
         console.log(this.state.from)
@@ -119,15 +125,17 @@ class Booking extends React.Component {
     }
     transact = async (event) => {
         var url = "http://localhost:4000/addBooking";
+        const op = await this.state.contract_instance.methods.giveConsent(this.state.airline_add).send();
+        if (op.status == "applied")
+            console.log(op.hash);
 
         await fetch(url, {
             method: "POST", // or 'PUT'
             mode: "cors",
             body: JSON.stringify({
-                //user_id: sessionStorage.getItem("LoggedUser"),
                 id: this.state.count + 1,
-                user_address: "temporary",
-                airline_address: "indigo",
+                user_address: this.state.wallet,
+                airline_address: this.state.airline_add,
                 to_: this.state.to_,
                 from_: this.state.from,
                 time: this.state.time,
@@ -141,9 +149,22 @@ class Booking extends React.Component {
             .then(res => res.body)
             .then(response => console.log("Success:", JSON.stringify(response)))
             .catch(error => console.error("Error:", error));
+
+        history.push('/loggedin', { address: this.state.wallet });
+        window.location.reload();
     }
 
     componentDidMount = async () => {
+        Tezos.setProvider({
+            rpc: "https://carthagenet.SmartPy.io",
+            signer: new TezBridgeSigner()
+        });
+
+        const contract = await Tezos.contract.at(contractAddress);
+        await this.setState({
+            contract_instance: contract
+        })
+
         var url = "http://localhost:4000/getCount";
         await fetch(url)
             .then(response => response.json())
@@ -241,13 +262,17 @@ class Booking extends React.Component {
                                                                     Your itinerary
                                                                 </Typography>
                                                                 <Typography variant="body2" color="textSecondary" component="p">
-                                                                    <strong>Airline:</strong> Indigo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <strong>Airline:</strong> Indigo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                     <strong>Aircraft:</strong> Airbus A320<br />
                                                                     <strong>Departure Date: </strong> {this.state.date} <br />
                                                                     <strong>Departure Time: </strong> {this.state.time} <br />
                                                                     <strong>From:</strong> {this.state.from} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                     <strong>To:</strong> {this.state.to_} <br />
-                                                                    <strong>Passenger's Name:</strong> {this.state.name}
+                                                                    <strong>Passenger's Name:</strong> {this.state.name} <br />
+                                                                    <strong>Airline's Address:</strong> {this.state.airline_add} (for demo)
                                                                 </Typography>
                                                             </CardContent>
                                                         </CardActionArea>
