@@ -12,7 +12,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
+import Popover from '@material-ui/core/Popover';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import history from '../history';
 
 const styles = makeStyles((theme) => ({
@@ -24,7 +25,11 @@ const styles = makeStyles((theme) => ({
         maxWidth: 500,
         flexGrow: 1,
         marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(2),
+        display: 'flex',
+        '& > *': {
+            margin: theme.spacing(1),
+        },
     },
     button: {
         marginLeft: theme.spacing(190)
@@ -38,8 +43,6 @@ const StyledTableCell = withStyles((theme) => ({
     },
     body: {
         fontSize: 14,
-        //maxWidth: 30
-        //marginLeft: theme.spacing(20)
     },
 }))(TableCell);
 
@@ -52,17 +55,19 @@ const StyledTableRow = withStyles((theme) => ({
     },
 }))(TableRow);
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     table: {
         maxWidth: 1500,
         marginLeft: 200,
         //minWidth: 700
     },
-});
+}));
 
 export default function LoggedIn(props) {
 
     const [options, setOptions] = React.useState([]);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
 
     React.useEffect(() => {
         var url = "http://localhost:4000/getBookings/" + props.location.state.address;
@@ -92,6 +97,13 @@ export default function LoggedIn(props) {
 
     const classes = styles();
     const classes1 = useStyles();
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    }
     return (
         <React.Fragment>
             <CssBaseline />
@@ -118,7 +130,7 @@ export default function LoggedIn(props) {
                             <StyledTableCell align="center">From</StyledTableCell>
                             <StyledTableCell align="center">To</StyledTableCell>
                             <StyledTableCell align="center">Date</StyledTableCell>
-                            <StyledTableCell align="center">Alter Booking</StyledTableCell>
+                            <StyledTableCell align="center">Action</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -129,7 +141,33 @@ export default function LoggedIn(props) {
                                 <StyledTableCell align="center">{options.from_}</StyledTableCell>
                                 <StyledTableCell align="center">{options.to_}</StyledTableCell>
                                 <StyledTableCell align="center">{options['date']}</StyledTableCell>
-                                <StyledTableCell align="center"><Button variant="contained" color="secondary" onClick={modifybooking(options.id)}>Modify</Button></StyledTableCell>
+                                <StyledTableCell align="center"><Button variant="contained" color="secondary" onClick={handleClick}>Alter</Button></StyledTableCell>
+                                <div>
+                                    <Popover
+                                        //id={id}
+                                        open={open}
+                                        anchorEl={anchorEl}
+                                        onClose={handleClose}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }}
+                                    >
+                                        <ButtonGroup
+                                            orientation="vertical"
+                                            color="primary"
+                                            aria-label="vertical contained primary button group"
+                                            variant="text"
+                                        >
+                                            <Button>Modify Booking</Button>
+                                            <Button>Cancel Booking</Button>
+                                        </ButtonGroup>
+                                    </Popover>
+                                </div>
                             </StyledTableRow>
                             //</TableRow>
                         ))}
@@ -138,8 +176,7 @@ export default function LoggedIn(props) {
             </TableContainer>
         </React.Fragment>
     );
+
+
 }
 
-function modifybooking(id) {
-    console.log(id)
-}

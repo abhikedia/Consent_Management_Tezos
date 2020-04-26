@@ -12,7 +12,8 @@ import history from '../history';
 import { Tezos } from '@taquito/taquito';
 import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 
-const contractAddress = "KT1XnADPsMgAvRCjJPW396hcYPNZWMDqFgR4";
+const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
+const tezbridge = window.tezbridge;
 
 const styles = theme => ({
     root: {
@@ -57,22 +58,24 @@ class Login extends React.Component {
         await this.setState({
             contract_instance: contract
         })
-        alert("Your account has been registered.");
     }
     constructor(props) {
         super(props);
         this.state = {
-            wallet: props.location.state.address,
+            wallet: '',
             contract_instance: ''
         }
     }
 
 
     checkLogin = async () => {
-
+        const address = await tezbridge.request({ method: 'get_source' });
+        this.setState({
+            wallet: address
+        })
         const storage = await this.state.contract_instance.storage();
         console.log(storage.get(this.state.wallet));
-        if (storage.get(this.state.wallet) == "")
+        if (storage.get(this.state.wallet) === undefined)
             alert("User Not Registered, Please Register")
         else {
             history.push('/loggedin', { address: this.state.wallet });
@@ -102,7 +105,7 @@ class Login extends React.Component {
                                 onClick={this.checkLogin}
                                 className={classes.submit}
                             >
-                                Sign In 
+                                Sign In
                             </Button>
                             <Grid container>
                                 <Grid item>

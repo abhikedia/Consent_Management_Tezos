@@ -22,7 +22,7 @@ import history from '../history';
 import { Tezos } from '@taquito/taquito';
 import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 
-const contractAddress = "KT1XnADPsMgAvRCjJPW396hcYPNZWMDqFgR4";
+const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
 
 const styles = theme => ({
     appBar: {

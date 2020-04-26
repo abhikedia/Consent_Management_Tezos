@@ -14,9 +14,9 @@ const steps = [
   { name: 'Step 3', desc: 'Click on copy button and click on Setup Account button below.', },
   { name: 'Step 4', desc: 'Click on import key and paste the copied data.', },
   { name: 'Step 5', desc: 'Give a name and password, then click Confirm', },
-  { name: 'Step 6', desc: 'Click on Choose Signer->Local Managers dropdown, select your name and enter the password', },
-  { name: 'Step 7', desc: 'Click on use as signer and you are done.', },
-  { name: 'Step 8', desc: "Move back to application's page and click on Register.", },
+  { name: 'Step 6', desc: 'Click on setup account button below.', },
+  { name: 'Step 7', desc: 'Click on Choose Signer->Local Managers dropdown, select your name and enter the password', },
+  { name: 'Step 8', desc: 'Click on use as signer and you are done.', }
 ];
 
 const styles = theme => ({
@@ -56,6 +56,8 @@ class Submit extends React.Component {
             </ListItem>))}
         </List>
         <Button variant="contained" color="secondary" fullWidth onClick={this.setup}>Setup Account</Button>
+        <strong>Note:</strong>There is a possibility that you might run into error after clicking register, that is because your account hasn't been revealed properly.
+        To reveal your account visit <a href="http://smartpy.io/demo/faucetImporter.html">this link</a> with the same account data provided above.
       </React.Fragment>
     );
   }

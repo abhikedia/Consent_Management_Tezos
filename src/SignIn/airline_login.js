@@ -12,8 +12,18 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
+import Popover from '@material-ui/core/Popover';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+import TextField from '@material-ui/core/TextField';
+import { Tezos } from '@taquito/taquito';
+import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 import history from '../history';
+
+const swarm = require("swarm-js").at("http://swarm-gateways.net");
+const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
 
 const styles = makeStyles((theme) => ({
     appBar: {
@@ -38,8 +48,6 @@ const StyledTableCell = withStyles((theme) => ({
     },
     body: {
         fontSize: 14,
-        //maxWidth: 30
-        //marginLeft: theme.spacing(20)
     },
 }))(TableCell);
 
@@ -52,19 +60,51 @@ const StyledTableRow = withStyles((theme) => ({
     },
 }))(TableRow);
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     table: {
         maxWidth: 1500,
         marginLeft: 200,
-        //minWidth: 700
     },
-});
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '50%',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: theme.spacing(50),
+        marginBottom: theme.spacing(50)
+    },
+    paper: {
+        backgroundColor: theme.palette.background.paper,
+        marginTop: theme.spacing(3),
+        marginBottom: theme.spacing(3),
+        padding: theme.spacing(2),
+        [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+            marginTop: theme.spacing(6),
+            marginBottom: theme.spacing(6),
+            padding: theme.spacing(3),
+        },
+    },
+}));
 
 export default function LoggedIn(props) {
 
     const [options, setOptions] = React.useState([]);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const [contract_instance, setContract] = React.useState(null);
+    const [open1, setOpen] = React.useState(false);
 
-    React.useEffect(() => {
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose1 = () => {
+        setOpen(false);
+    };
+
+    React.useEffect(async () => {
         var url = "http://localhost:4000/getPassengers/" + "tz1R4p21KgEqHGcEvJcDe7hRZfjVZCX47EwJ";
 
         function createData(id, name, user_address, to_, from_, date) {
@@ -86,12 +126,24 @@ export default function LoggedIn(props) {
         }).catch(err => {
             console.log('caught it!', err);
         })
+        Tezos.setProvider({
+            rpc: "https://carthagenet.SmartPy.io",
+            signer: new TezBridgeSigner()
+        });
 
-        console.log(options)
+        const contract = await Tezos.contract.at(contractAddress);
+        setContract(contract);
     }, [])
 
     const classes = styles();
     const classes1 = useStyles();
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    }
     return (
         <React.Fragment>
             <CssBaseline />
@@ -100,10 +152,6 @@ export default function LoggedIn(props) {
                     <Typography variant="h6" color="inherit" noWrap>
                         <strong>SHAttEr Technologies</strong>
                     </Typography>
-                    <Button color="inherit" className={classes.button} onClick={() => {
-                        history.push('/booking', { address: props.location.state.address });
-                        window.location.reload();
-                    }}><strong>Make Booking</strong></Button>
                 </Toolbar>
             </AppBar>
             <Typography variant="h2" className={classes.root} component="h2" gutterBottom >
@@ -129,9 +177,85 @@ export default function LoggedIn(props) {
                                 <StyledTableCell align="center">{options.from_}</StyledTableCell>
                                 <StyledTableCell align="center">{options.to_}</StyledTableCell>
                                 <StyledTableCell align="center">{options['date']}</StyledTableCell>
-                                <StyledTableCell align="center"><Button variant="contained" color="secondary" onClick={modifybooking(options.id)}>Contact</Button></StyledTableCell>
+                                <StyledTableCell align="center"><Button variant="contained" color="secondary" onClick={handleClick}>Contact</Button></StyledTableCell>
+                                <div>
+                                    <Popover
+                                        //id={id}
+                                        open={open}
+                                        anchorEl={anchorEl}
+                                        onClose={handleClose}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }}
+                                    >
+                                        <ButtonGroup
+                                            orientation="vertical"
+                                            color="primary"
+                                            aria-label="vertical contained primary button group"
+                                            variant="text"
+                                        >
+                                            <div>
+                                                <Button onClick={handleOpen}>
+                                                    Message
+                                                </Button>
+                                                <Modal
+                                                    aria-labelledby="transition-modal-title"
+                                                    aria-describedby="transition-modal-description"
+                                                    className={classes1.modal}
+                                                    open={open1}
+                                                    onClose={handleClose1}
+                                                    closeAfterTransition
+                                                    BackdropComponent={Backdrop}
+                                                    BackdropProps={{
+                                                        timeout: 500,
+                                                    }}
+                                                >
+                                                    <Fade in={open1}>
+                                                        <div className={classes1.paper}>
+                                                            <div>
+                                                                <TextField
+                                                                    id="outlined-multiline-static"
+                                                                    label="Send your passenger a message"
+                                                                    multiline
+                                                                    fullWidth
+                                                                    rows={6}
+                                                                    variant="outlined"
+                                                                />
+                                                            </div>
+                                                            <Button variant="contained" color="secondary" fullWidth onClick={async ()=> {
+                                                                const storage = await contract_instance.storage();
+                                                                const temp=JSON.stringify(storage.get(options.user_address));
+                                                                const result=JSON.parse(temp);
+                                                                for(var i=0; i< result.allowed.length;i++)
+                                                                {
+                                                                    console.log(result.allowed[i]);
+                                                                    if(result.allowed[i].localeCompare("tz1R4p21KgEqHGcEvJcDe7hRZfjVZCX47EwJ")==0)
+                                                                    {
+                                                                        swarm.download(result.qid).then(array => {
+                                                                            const str=swarm.toString(array);
+                                                                            const answer=JSON.parse(str);
+                                                                            console.log(answer.phone); 
+                                                                          });
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                //console.log(method);
+                                                                //console.log(storage);
+                                                            }}>Send</Button>
+                                                        </div>
+                                                    </Fade>
+                                                </Modal>
+                                            </div>
+                                            <Button>Call</Button>
+                                        </ButtonGroup>
+                                    </Popover>
+                                </div>
                             </StyledTableRow>
-                            //</TableRow>
                         ))}
                     </TableBody>
                 </Table>
@@ -140,6 +264,3 @@ export default function LoggedIn(props) {
     );
 }
 
-function modifybooking(id) {
-    console.log(id)
-}

@@ -16,7 +16,7 @@ import history from '../history';
 import { Tezos } from '@taquito/taquito';
 import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 
-const contractAddress = "KT1XnADPsMgAvRCjJPW396hcYPNZWMDqFgR4";
+const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
 const tezbridge = window.tezbridge;
 
@@ -163,7 +163,7 @@ class Register extends React.Component {
       if (op.status == "applied") {
         console.log(op.hash);
 
-        history.push('/login', { address: this.state.wallet });
+        history.push('/login');
         window.location.reload();
 
       }
