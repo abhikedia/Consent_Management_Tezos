@@ -20,8 +20,8 @@ It Installs all the dependencies. <br/>
 <b>Step 4:</b> Set your mysql password as 'password' or set your desired password in file named 'server.js'.<br/>
 <b>Step 5:</b> In the project directory, start the server by:
 
-### 'node server.js' 
-<br/>
+### `node server.js`
+
 <b>Step 6:</b> In the project directory, run:
 
 ### `sudo npm start`
