@@ -227,20 +227,18 @@ export default function LoggedIn(props) {
                                                                     variant="outlined"
                                                                 />
                                                             </div>
-                                                            <Button variant="contained" color="secondary" fullWidth onClick={async ()=> {
+                                                            <Button variant="contained" color="secondary" fullWidth onClick={async () => {
                                                                 const storage = await contract_instance.storage();
-                                                                const temp=JSON.stringify(storage.get(options.user_address));
-                                                                const result=JSON.parse(temp);
-                                                                for(var i=0; i< result.allowed.length;i++)
-                                                                {
+                                                                const temp = JSON.stringify(storage.get(options.user_address));
+                                                                const result = JSON.parse(temp);
+                                                                for (var i = 0; i < result.allowed.length; i++) {
                                                                     console.log(result.allowed[i]);
-                                                                    if(result.allowed[i].localeCompare("tz1R4p21KgEqHGcEvJcDe7hRZfjVZCX47EwJ")==0)
-                                                                    {
+                                                                    if (result.allowed[i].localeCompare("tz1R4p21KgEqHGcEvJcDe7hRZfjVZCX47EwJ") == 0) {
                                                                         swarm.download(result.qid).then(array => {
-                                                                            const str=swarm.toString(array);
-                                                                            const answer=JSON.parse(str);
-                                                                            console.log(answer.phone); 
-                                                                          });
+                                                                            const str = swarm.toString(array);
+                                                                            const answer = JSON.parse(str);
+                                                                            console.log(answer.phone);
+                                                                        });
                                                                         break;
                                                                     }
                                                                 }

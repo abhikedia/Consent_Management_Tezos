@@ -175,6 +175,8 @@ class Booking extends React.Component {
                     this.setState({ count: response.data[0].id });
             })
             .catch(err => console.log(err));
+        
+        console.log(this.state.count);
     }
     render() {
         const { classes } = this.props;

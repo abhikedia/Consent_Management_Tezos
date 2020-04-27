@@ -163,7 +163,7 @@ class Register extends React.Component {
       if (op.status == "applied") {
         console.log(op.hash);
 
-        history.push('/login');
+        history.push('/login', { address: this.state.wallet });
         window.location.reload();
 
       }

@@ -15,6 +15,11 @@ import Paper from '@material-ui/core/Paper';
 import Popover from '@material-ui/core/Popover';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import history from '../history';
+import { Tezos } from '@taquito/taquito';
+import { TezBridgeSigner } from '@taquito/tezbridge-signer';
+
+const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
+const tezbridge = window.tezbridge;
 
 const styles = makeStyles((theme) => ({
     appBar: {
@@ -64,12 +69,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function LoggedIn(props) {
-
+    const [contract_instance, setContract_instance] = React.useState(null);
     const [options, setOptions] = React.useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
 
-    React.useEffect(() => {
+    React.useEffect(async () => {
         var url = "http://localhost:4000/getBookings/" + props.location.state.address;
 
         function createData(id, name, airline_address, to_, from_, date) {
@@ -92,7 +97,13 @@ export default function LoggedIn(props) {
             console.log('caught it!', err);
         })
 
-        console.log(options)
+        Tezos.setProvider({
+            rpc: "https://carthagenet.SmartPy.io",
+            signer: new TezBridgeSigner()
+        });
+
+        const contract = await Tezos.contract.at(contractAddress);
+        setContract_instance(contract);
     }, [])
 
     const classes = styles();
@@ -164,7 +175,20 @@ export default function LoggedIn(props) {
                                             variant="text"
                                         >
                                             <Button>Modify Booking</Button>
-                                            <Button>Cancel Booking</Button>
+                                            <Button onClick={async () => {
+                                                const op = await contract_instance.methods.raiseConsent(options.airline_address).send();
+                                                // if (op.status == "applied")
+                                                //     console.log(op.hash);
+                                                var url = "http://localhost:4000/deleteBooking/" + options.id;
+                                                fetch(url, {
+                                                    method: 'DELETE'
+                                                }).then(function (response) {
+                                                    if (response.status >= 400) {
+                                                        throw new Error("Bad response from server");
+                                                    }
+                                                    return response.json();
+                                                })
+                                            }}>Cancel Booking</Button>
                                         </ButtonGroup>
                                     </Popover>
                                 </div>
