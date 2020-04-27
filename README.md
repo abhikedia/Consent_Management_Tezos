@@ -10,7 +10,7 @@ When the airline wants to contact the passenger, say send a message, they have t
 Once the flight is over, the user can login and revoke airline's access to his data.
 
 ## How to run?
-<b>Step 1:</b> Clone the repository and move inside the project directory. <br/>
+<b>Step 1:</b> Clone the repository and move inside the project directory. Make sure you have node and npm installed. <br/>
 <b>Step 2:</b> In the project directory, run:
 
 ### `sudo npm install`
