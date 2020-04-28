@@ -66,7 +66,7 @@ export default function Asynchronous(props)
                 setOpen(false);
             }}
             onChange={(event, value) => {
-                {props.to(value.code)};
+                props.to(value.code);
             }}
             getOptionLabel={option => option.code}
             options={options}

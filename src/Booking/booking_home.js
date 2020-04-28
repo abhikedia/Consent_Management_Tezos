@@ -22,7 +22,7 @@ import history from '../history';
 import { Tezos } from '@taquito/taquito';
 import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 
-const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
+const contractAddress = "KT1X6q8unyUQ996t5VxcpJR4Ai9kopCQnXvB";
 
 const styles = theme => ({
     appBar: {
@@ -78,20 +78,21 @@ const styles = theme => ({
     }
 });
 
-function sleep(delay = 0) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, delay);
-    });
-}
+// function sleep(delay = 0) {
+//     return new Promise((resolve) => {
+//         setTimeout(resolve, delay);
+//     });
+// }
 
 class Booking extends React.Component {
+    d = new Date();
     constructor(props) {
         super(props);
         this.state = {
             from: "",
             open: false,
-            date: "2020-04-16",
-            time: "10:30",
+            date: "",
+            time: "",
             name: "",
             count: -1,
             to_: "",
@@ -125,8 +126,11 @@ class Booking extends React.Component {
     }
     transact = async (event) => {
         var url = "http://localhost:4000/addBooking";
-        const op = await this.state.contract_instance.methods.giveConsent(this.state.airline_add).send();
-        if (op.status == "applied")
+
+        const addr = this.state.date + this.state.time + this.state.airline_add;
+        console.log(addr);
+        const op = await this.state.contract_instance.methods.giveConsent(addr).send();
+        if (op.status === "applied")
             console.log(op.hash);
 
         await fetch(url, {
@@ -165,18 +169,17 @@ class Booking extends React.Component {
             contract_instance: contract
         })
 
+
         var url = "http://localhost:4000/getCount";
         await fetch(url)
             .then(response => response.json())
             .then(response => {
-                if (response.data.length == 0)
+                if (response.data.length === 0)
                     this.setState({ count: 0 });
                 else
                     this.setState({ count: response.data[0].id });
             })
             .catch(err => console.log(err));
-        
-        console.log(this.state.count);
     }
     render() {
         const { classes } = this.props;
@@ -209,7 +212,6 @@ class Booking extends React.Component {
                                         label="Select Date"
                                         fullWidth
                                         type="date"
-                                        defaultValue="2020-04-16"
                                         onChange={this.myChangeHandler1}
                                     />
                                 </Grid>
@@ -218,7 +220,6 @@ class Booking extends React.Component {
                                         label="Select Time"
                                         fullWidth
                                         type="time"
-                                        defaultValue="10:30"
                                         onChange={this.myChangeHandler2}
                                     />
                                 </Grid>
@@ -264,7 +265,7 @@ class Booking extends React.Component {
                                                                     Your itinerary
                                                                 </Typography>
                                                                 <Typography variant="body2" color="textSecondary" component="p">
-                                                                    <strong>Airline:</strong> Indigo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <strong>Airline:</strong> ABC &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                     <strong>Aircraft:</strong> Airbus A320<br />
                                                                     <strong>Departure Date: </strong> {this.state.date} <br />

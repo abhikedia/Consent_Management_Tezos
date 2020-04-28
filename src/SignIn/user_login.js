@@ -12,7 +12,7 @@ import history from '../history';
 import { Tezos } from '@taquito/taquito';
 import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 
-const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
+const contractAddress = "KT1X6q8unyUQ996t5VxcpJR4Ai9kopCQnXvB";
 const tezbridge = window.tezbridge;
 
 const styles = theme => ({

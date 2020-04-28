@@ -16,9 +16,10 @@ import history from '../history';
 import { Tezos } from '@taquito/taquito';
 import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 
-const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
+const contractAddress = "KT1X6q8unyUQ996t5VxcpJR4Ai9kopCQnXvB";
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
-const tezbridge = window.tezbridge;
+const CryptoJS = require('crypto-js');
+//const tezbridge = window.tezbridge;
 
 
 const styles = theme => ({
@@ -149,7 +150,8 @@ class Register extends React.Component {
         "aadhar": this.state.aadhar,
         "email": this.state.email
       });
-      await swarm.upload(body).then(hash1 => {
+
+      await swarm.upload(CryptoJS.AES.encrypt(body, 'SHAttErTechnologies').toString()).then(hash1 => {
         this.setState({
           hash: hash1
         });
@@ -160,7 +162,7 @@ class Register extends React.Component {
     if (this.state.activeStep === 2) {
       console.log(this.state.wallet);
       const op = await this.state.contract_instance.methods.addQid(this.state.hash).send();
-      if (op.status == "applied") {
+      if (op.status === "applied") {
         console.log(op.hash);
 
         history.push('/login', { address: this.state.wallet });

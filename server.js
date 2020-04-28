@@ -72,8 +72,7 @@ app.get("/getPassengers/:add", function (req, res) {
 });
 
 app.delete('/deleteBooking/:id', function (req, res) {
-    console.log(req.body);
-    connection.query('DELETE FROM `Bookings` WHERE `id`=?', [req.body.Id], function (error, results, fields) {
+    connection.query('DELETE FROM `Bookings` WHERE `id`=?', [req.params.id], function (error, results, fields) {
         if (error) throw error;
         res.end('Record has been deleted!');
     });

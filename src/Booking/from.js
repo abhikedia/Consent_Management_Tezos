@@ -68,7 +68,7 @@ export default function Asynchronous(props) {
             getOptionLabel={option => option.code}
             options={options}
             onChange={(event, value) => {
-                {props.from(value.code)};
+                props.from(value.code);
             }}
             loading={loading}
             renderInput={(params) => (

@@ -32,9 +32,9 @@ const styles = theme => ({
 });
 
 class Submit extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
   setup = async () => {
     const address = await tezbridge.request({ method: 'get_source' });
     console.log(address);

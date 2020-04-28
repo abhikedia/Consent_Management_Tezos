@@ -20,10 +20,11 @@ import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 import { Tezos } from '@taquito/taquito';
 import { TezBridgeSigner } from '@taquito/tezbridge-signer';
-import history from '../history';
+//import history from '../history';
 
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
-const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
+const contractAddress = "KT1X6q8unyUQ996t5VxcpJR4Ai9kopCQnXvB";
+const CryptoJS = require('crypto-js');
 
 const styles = makeStyles((theme) => ({
     appBar: {
@@ -95,6 +96,7 @@ export default function LoggedIn(props) {
     const open = Boolean(anchorEl);
     const [contract_instance, setContract] = React.useState(null);
     const [open1, setOpen] = React.useState(false);
+    const [value, setValue] = React.useState("");
 
     const handleOpen = () => {
         setOpen(true);
@@ -105,10 +107,17 @@ export default function LoggedIn(props) {
     };
 
     React.useEffect(async () => {
+        Tezos.setProvider({
+            rpc: "https://carthagenet.SmartPy.io",
+            signer: new TezBridgeSigner()
+        });
+
+        const contract = await Tezos.contract.at(contractAddress);
+        setContract(contract);
         var url = "http://localhost:4000/getPassengers/" + "tz1R4p21KgEqHGcEvJcDe7hRZfjVZCX47EwJ";
 
-        function createData(id, name, user_address, to_, from_, date) {
-            return { id, name, user_address, to_, from_, date };
+        function createData(id, name, user_address, to_, from_, time, date) {
+            return { id, name, user_address, to_, from_, time, date };
         }
 
         fetch(url, {
@@ -121,18 +130,13 @@ export default function LoggedIn(props) {
         }).then(data => {
             const row = [];
             for (var i in data)
-                row.push(createData(data[i].id, data[i].name, data[i].user_address, data[i].to_, data[i].from_, data[i].date));
+                row.push(createData(data[i].id, data[i].name, data[i].user_address, data[i].to_, data[i].from_, data[i].time, data[i].date));
             setOptions(row)
         }).catch(err => {
             console.log('caught it!', err);
         })
-        Tezos.setProvider({
-            rpc: "https://carthagenet.SmartPy.io",
-            signer: new TezBridgeSigner()
-        });
 
-        const contract = await Tezos.contract.at(contractAddress);
-        setContract(contract);
+
     }, [])
 
     const classes = styles();
@@ -144,6 +148,7 @@ export default function LoggedIn(props) {
     const handleClose = () => {
         setAnchorEl(null);
     }
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -166,6 +171,7 @@ export default function LoggedIn(props) {
                             <StyledTableCell align="center">From</StyledTableCell>
                             <StyledTableCell align="center">To</StyledTableCell>
                             <StyledTableCell align="center">Date</StyledTableCell>
+                            <StyledTableCell align="center">Time</StyledTableCell>
                             <StyledTableCell align="center">Action</StyledTableCell>
                         </TableRow>
                     </TableHead>
@@ -176,7 +182,8 @@ export default function LoggedIn(props) {
                                 <StyledTableCell align="center">{options.name}</StyledTableCell>
                                 <StyledTableCell align="center">{options.from_}</StyledTableCell>
                                 <StyledTableCell align="center">{options.to_}</StyledTableCell>
-                                <StyledTableCell align="center">{options['date']}</StyledTableCell>
+                                <StyledTableCell align="center">{options.date}</StyledTableCell>
+                                <StyledTableCell align="center">{options.time}</StyledTableCell>
                                 <StyledTableCell align="center"><Button variant="contained" color="secondary" onClick={handleClick}>Contact</Button></StyledTableCell>
                                 <div>
                                     <Popover
@@ -223,6 +230,8 @@ export default function LoggedIn(props) {
                                                                     label="Send your passenger a message"
                                                                     multiline
                                                                     fullWidth
+                                                                    value={value}
+                                                                    onChange={e => setValue(e.target.value)}
                                                                     rows={6}
                                                                     variant="outlined"
                                                                 />
@@ -231,19 +240,48 @@ export default function LoggedIn(props) {
                                                                 const storage = await contract_instance.storage();
                                                                 const temp = JSON.stringify(storage.get(options.user_address));
                                                                 const result = JSON.parse(temp);
+                                                                var flag = 1;
                                                                 for (var i = 0; i < result.allowed.length; i++) {
-                                                                    console.log(result.allowed[i]);
-                                                                    if (result.allowed[i].localeCompare("tz1R4p21KgEqHGcEvJcDe7hRZfjVZCX47EwJ") == 0) {
-                                                                        swarm.download(result.qid).then(array => {
+                                                                    const addr = options.date + options.time + "tz1R4p21KgEqHGcEvJcDe7hRZfjVZCX47EwJ";
+                                                                    if (result.allowed[i].localeCompare(addr) == 0) {
+                                                                        flag = 0;
+                                                                        swarm.download(result.qid).then(async array => {
                                                                             const str = swarm.toString(array);
-                                                                            const answer = JSON.parse(str);
+                                                                            const bytes = CryptoJS.AES.decrypt(str, 'SHAttErTechnologies');
+                                                                            const originalText = bytes.toString(CryptoJS.enc.Utf8);
+                                                                            const answer = JSON.parse(originalText);
                                                                             console.log(answer.phone);
+                                                                            console.log(value)
+                                                                            await fetch("https://inteltech.p.rapidapi.com/send.php", {
+                                                                                "method": "POST",
+                                                                                "headers": {
+                                                                                    "x-rapidapi-host": "inteltech.p.rapidapi.com",
+                                                                                    "x-rapidapi-key": "4610a357fbmsh24f9687c37c28dbp14e889jsnac3da36d88ea",
+                                                                                    "content-type": "application/x-www-form-urlencoded"
+                                                                                },
+                                                                                "body": {
+                                                                                    "schedule": "1377959755",
+                                                                                    "senderid": "MyCompany",
+                                                                                    "return": "http://yourwebsite.com",
+                                                                                    "username": "mogosa7105@iopmail.com",
+                                                                                    "key": "841BB4B1-CC25-780C-C265-ED63A161968E",
+                                                                                    "sms": parseInt(answer.phone),
+                                                                                    "message": value
+                                                                                }
+                                                                            })
+                                                                                .then(response => {
+                                                                                    console.log(response);
+                                                                                    window.location.reload();
+                                                                                })
+                                                                                .catch(err => {
+                                                                                    console.log(err);
+                                                                                });
                                                                         });
                                                                         break;
                                                                     }
                                                                 }
-                                                                //console.log(method);
-                                                                //console.log(storage);
+                                                                if (flag === 1)
+                                                                    alert("You don't have access to this data.");
                                                             }}>Send</Button>
                                                         </div>
                                                     </Fade>

@@ -18,8 +18,8 @@ import history from '../history';
 import { Tezos } from '@taquito/taquito';
 import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 
-const contractAddress = "KT1KT11F7jS89S9NTgMGNPV7QQZFcHazvTnj";
-const tezbridge = window.tezbridge;
+const contractAddress = "KT1X6q8unyUQ996t5VxcpJR4Ai9kopCQnXvB";
+//const tezbridge = window.tezbridge;
 
 const styles = makeStyles((theme) => ({
     appBar: {
@@ -77,8 +77,8 @@ export default function LoggedIn(props) {
     React.useEffect(async () => {
         var url = "http://localhost:4000/getBookings/" + props.location.state.address;
 
-        function createData(id, name, airline_address, to_, from_, date) {
-            return { id, name, airline_address, to_, from_, date };
+        function createData(id, name, airline_address, to_, from_, time, date) {
+            return { id, name, airline_address, to_, from_, time, date };
         }
 
         fetch(url, {
@@ -91,7 +91,7 @@ export default function LoggedIn(props) {
         }).then(data => {
             const row = [];
             for (var i in data)
-                row.push(createData(data[i].id, data[i].name, data[i].airline_address, data[i].to_, data[i].from_, data[i].date));
+                row.push(createData(data[i].id, data[i].name, data[i].airline_address, data[i].to_, data[i].from_, data[i].time, data[i].date));
             setOptions(row)
         }).catch(err => {
             console.log('caught it!', err);
@@ -141,6 +141,7 @@ export default function LoggedIn(props) {
                             <StyledTableCell align="center">From</StyledTableCell>
                             <StyledTableCell align="center">To</StyledTableCell>
                             <StyledTableCell align="center">Date</StyledTableCell>
+                            <StyledTableCell align="center">Time</StyledTableCell>
                             <StyledTableCell align="center">Action</StyledTableCell>
                         </TableRow>
                     </TableHead>
@@ -151,7 +152,8 @@ export default function LoggedIn(props) {
                                 <StyledTableCell align="center">{options.name}</StyledTableCell>
                                 <StyledTableCell align="center">{options.from_}</StyledTableCell>
                                 <StyledTableCell align="center">{options.to_}</StyledTableCell>
-                                <StyledTableCell align="center">{options['date']}</StyledTableCell>
+                                <StyledTableCell align="center">{options.date}</StyledTableCell>
+                                <StyledTableCell align="center">{options.time}</StyledTableCell>
                                 <StyledTableCell align="center"><Button variant="contained" color="secondary" onClick={handleClick}>Alter</Button></StyledTableCell>
                                 <div>
                                     <Popover
@@ -176,17 +178,18 @@ export default function LoggedIn(props) {
                                         >
                                             <Button>Modify Booking</Button>
                                             <Button onClick={async () => {
-                                                const op = await contract_instance.methods.raiseConsent(options.airline_address).send();
-                                                // if (op.status == "applied")
-                                                //     console.log(op.hash);
+                                                const addr = options.date + options.time + options.airline_address;
+                                                const op = await contract_instance.methods.raiseConsent(addr).send();
+                                                if (op.status == "applied")
+                                                    console.log(op.hash);
                                                 var url = "http://localhost:4000/deleteBooking/" + options.id;
-                                                fetch(url, {
+                                                await fetch(url, {
                                                     method: 'DELETE'
                                                 }).then(function (response) {
                                                     if (response.status >= 400) {
                                                         throw new Error("Bad response from server");
                                                     }
-                                                    return response.json();
+                                                    window.location.reload();
                                                 })
                                             }}>Cancel Booking</Button>
                                         </ButtonGroup>
