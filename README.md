@@ -20,8 +20,8 @@ It Installs all the dependencies. <br/>
 <b>Step 4:</b> Set your mysql password as 'password' or set your desired password in file named 'server.js'.<br/>
 <b>Step 5:</b> Register yourself on Rapid API platform and select 'travelpayouts-flight-data-v1'. Put your Rapid API key in "x-rapidapi-key" in line 34 in 'from.js' and 'to.js'.<br/>
 <b>Step 6:</b> Go to 'airline.js' and put the same API key in "x-rapidapi-key" in line 259.<br/>
-<b>Step 7:</b> Register on travelpayout's website and get an API key. Put the key in "x-access-token" in line 35 in 'from.js' and 'to.js'.<br/>
-<b>Step 8:</b> Register on www.clicksend.com and get another API key. Put the username and key in line 266 and 267 respectively.<br/>
+<b>Step 7:</b> Register on https://www.travelpayouts.com/ and get an API key. Put the key in "x-access-token" in line 35 in 'from.js' and 'to.js'.<br/>
+<b>Step 8:</b> Register on https://www.clicksend.com/ and get another API key. Put the username and key in line 266 and 267 respectively.<br/>
 <b>Step 9:</b> In the project directory, start the server by:
 
 ### `node server.js`
