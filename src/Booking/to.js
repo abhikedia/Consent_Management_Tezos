@@ -31,8 +31,8 @@ export default function Asynchronous(props)
                         "x-rapidapi-host":
                             "travelpayouts-travelpayouts-flight-data-v1.p.rapidapi.com",
                         "x-rapidapi-key":
-                            "4610a357fbmsh24f9687c37c28dbp14e889jsnac3da36d88ea",
-                        "x-access-token": "467118e305ef5953e45e4e72ec0ae022"
+                            "",
+                        "x-access-token": ""
                     }
                 }
             );

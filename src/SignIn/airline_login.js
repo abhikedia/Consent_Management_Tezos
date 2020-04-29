@@ -160,7 +160,7 @@ export default function LoggedIn(props) {
                 </Toolbar>
             </AppBar>
             <Typography variant="h2" className={classes.root} component="h2" gutterBottom >
-                <strong>Bookings</strong>
+                <strong>Airline Bookings</strong>
             </Typography>
             <TableContainer component={Paper}>
                 <Table className={classes1.table} aria-label="customized table">
@@ -263,8 +263,8 @@ export default function LoggedIn(props) {
                                                                                     "schedule": "1377959755",
                                                                                     "senderid": "MyCompany",
                                                                                     "return": "http://yourwebsite.com",
-                                                                                    "username": "mogosa7105@iopmail.com",
-                                                                                    "key": "841BB4B1-CC25-780C-C265-ED63A161968E",
+                                                                                    "username": "",
+                                                                                    "key": "",
                                                                                     "sms": parseInt(answer.phone),
                                                                                     "message": value
                                                                                 }
