@@ -19,7 +19,7 @@ import { TezBridgeSigner } from '@taquito/tezbridge-signer';
 const contractAddress = "KT1X6q8unyUQ996t5VxcpJR4Ai9kopCQnXvB";
 const swarm = require("swarm-js").at("http://swarm-gateways.net");
 const CryptoJS = require('crypto-js');
-//const tezbridge = window.tezbridge;
+const tezbridge = window.tezbridge;
 
 
 const styles = theme => ({
@@ -160,6 +160,10 @@ class Register extends React.Component {
       console.log(this.state.contract_instance.methods);
     }
     if (this.state.activeStep === 2) {
+      tezbridge.request({
+        method:'set_host',
+        host:'https://carthagenet.SmartPy.io'
+      })
       console.log(this.state.wallet);
       const op = await this.state.contract_instance.methods.addQid(this.state.hash).send();
       if (op.status === "applied") {
@@ -186,6 +190,7 @@ class Register extends React.Component {
     await this.setState({
       contract_instance: contract
     })
+
   }
 
   render() {
