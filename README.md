@@ -16,8 +16,14 @@ Once the flight is over, the user can login and revoke airline's access to his d
 ### `sudo npm install`
 
 It Installs all the dependencies. <br/>
-<b>Step 3:</b> In a new terminal, run mysql server and create a database named 'ConsentManagement'. Select the database and run the query present in file named 'query.sql'.<br/>
-<b>Step 4:</b> Set your mysql password as 'password' or set your desired password in file named 'server.js'.<br/>
+<b>Step 3:</b> Set your mysql password as 'password' or set your desired password in file named 'server.js' in line 12.<br/>
+
+#### Follow this link to know how to set mySQL password- https://stackoverflow.com/questions/16556497/how-to-reset-or-change-the-mysql-root-password
+
+<b>Step 4:</b> In a new terminal, run mysql server and create a database named 'ConsentManagement'. Select the database and run the query present in file named 'query.sql'.<br/>
+
+### 'mysql -u root -p'
+
 <b>Step 5:</b> Register yourself on Rapid API platform and select 'travelpayouts-flight-data-v1'. Put your Rapid API key in "x-rapidapi-key" in line 34 in 'from.js' and 'to.js'.<br/>
 <b>Step 6:</b> Go to 'airline.js' and put the same API key in "x-rapidapi-key" in line 259.<br/>
 <b>Step 7:</b> Register on https://www.travelpayouts.com/ and get an API key. Put the key in "x-access-token" in line 35 in 'from.js' and 'to.js'.<br/>

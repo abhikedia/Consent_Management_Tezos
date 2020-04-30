@@ -13,10 +13,11 @@ const steps = [
   { name: 'Step 2', desc: 'Give the confirmation of you not being a robot, and proceed.', },
   { name: 'Step 3', desc: 'Click on copy button and click on Setup Account button below.', },
   { name: 'Step 4', desc: 'Click on import key and paste the copied data.', },
-  { name: 'Step 5', desc: 'Give a name and password, then click Confirm', },
-  { name: 'Step 6', desc: 'Click on setup account button below.', },
-  { name: 'Step 7', desc: 'Click on Choose Signer->Local Managers dropdown, select your name and enter the password', },
-  { name: 'Step 8', desc: 'Click on use as signer and you are done.', }
+  { name: 'Step 5', desc: 'Give a name and password, then click Confirm.', },
+  { name: 'Step 6', desc: 'Click on the link on top of the page(next to PsCARTHA) and replace it by https://carthagenet.SmartPy.io, then close the tab.', },
+  { name: 'Step 7', desc: 'Click again on setup account button below.', },
+  { name: 'Step 8', desc: 'Click on Choose Signer->Local Managers dropdown, select your name and enter the password', },
+  { name: 'Step 9', desc: 'Click on use as signer and you are done.', }
 ];
 
 const styles = theme => ({
@@ -57,7 +58,7 @@ class Submit extends React.Component {
         </List>
         <Button variant="contained" color="secondary" fullWidth onClick={this.setup}>Setup Account</Button>
         <strong>Note:</strong>There is a possibility that you might run into error after clicking register, that is because your account hasn't been revealed properly.
-        To reveal your account visit <a href="http://smartpy.io/demo/faucetImporter.html">this link</a> with the same account data provided above.
+        To reveal your account visit <a href="http://smartpy.io/demo/faucetImporter.html">this link</a> with the same account data provided above and follow the steps.
       </React.Fragment>
     );
   }

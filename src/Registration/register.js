@@ -160,10 +160,6 @@ class Register extends React.Component {
       console.log(this.state.contract_instance.methods);
     }
     if (this.state.activeStep === 2) {
-      tezbridge.request({
-        method:'set_host',
-        host:'https://carthagenet.SmartPy.io'
-      })
       console.log(this.state.wallet);
       const op = await this.state.contract_instance.methods.addQid(this.state.hash).send();
       if (op.status === "applied") {
