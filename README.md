@@ -22,7 +22,9 @@ It Installs all the dependencies. <br/>
 
 <b>Step 4:</b> In a new terminal, run mysql server and create a database named 'ConsentManagement'. Select the database and run the query present in file named 'query.sql'.<br/>
 
-### 'mysql -u root -p'
+#### To start the mySQL server run- 
+
+### `mysql -u root -p`
 
 <b>Step 5:</b> Register yourself on Rapid API platform and select 'travelpayouts-flight-data-v1'. Put your Rapid API key in "x-rapidapi-key" in line 34 in 'from.js' and 'to.js'.<br/>
 <b>Step 6:</b> Go to 'airline.js' and put the same API key in "x-rapidapi-key" in line 259.<br/>
